@@ -60,8 +60,9 @@ public class Main {
       */
 
     public static void main (String[] args) {
-        //exe1();
-        exe2();
+        // exe1();
+        // exe2();
+        exe3();
     }
 
     private static final int N_THREADS = 100;
@@ -98,6 +99,7 @@ public class Main {
 
     /**
      * Cria 100 Agencias que realiza 1000 operações sobre as 1000 contas de 1 Banco.
+     * Neste caso a sincronização é ao nível do objeto Banco.
      */
     public static void exe2() {
 
@@ -126,7 +128,40 @@ public class Main {
               soma-se o saldo interno de todas as Agencias, e esse saldo tem de ser igual ao saldo interno do Banco.
               Ou seja, o próximo System.println() devia indicar -> true <-
          */
-
         System.out.println( (banco.getSaldo() == saldoAgencias) + " | saldo total = " + banco.getSaldo());
+    }
+
+    /**
+     * Cria 100 Agencias que realiza 1000 operações sobre as 1000 contas de 1 Banco.
+     * Neste caso a sincronização é ao nível do objeto Conta.
+     */
+    public static void exe3() {
+
+        int saldoAgencias = 0;
+
+        Banco2 banco = new Banco2(N_CONTAS);
+
+        Agencia2[] agencias = new Agencia2[N_AGENCIAS]; // inicializa o array de Agencias
+
+        for (int i = 0; i < agencias.length; i++) {
+            agencias[i] = new Agencia2(banco); // cria cada Agencia
+            agencias[i].start(); // iniciar o trabalho (operações) de cada Agencia
+        }
+
+        for (int i = 0; i < agencias.length; i++) {
+            try {
+                agencias[i].join(); // esperar que a Agencia acabe as operações
+                saldoAgencias += agencias[i].getSaldo(); // soma o saldo interno de cada Agencia
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        /*
+        NOTA: para que exista uma PROVA que realmente não houverem operações mal feitas (Threads MAL sincronizadas)
+              soma-se o saldo interno de todas as Agencias, e esse saldo tem de ser igual ao saldo interno do Banco.
+              Ou seja, o próximo System.println() devia indicar -> true <-
+         */
+        System.out.println(banco.balanco() == saldoAgencias);
     }
 }

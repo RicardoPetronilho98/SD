@@ -59,4 +59,15 @@ public class Banco {
     synchronized public int consulta(int i) {
         return this.contas[i];
     }
+
+    /**
+     * Transfere um valor dado da conta a para a conta b.
+     * @param a conta remtetente
+     * @param b conta destinatária
+     * @param valor valor a tranferir
+     */
+    synchronized public void transferir(int a, int b, int valor) {
+        this.debito(valor, a);
+        this.credito(valor, b);
+    }
 }
