@@ -26,13 +26,18 @@ public class Banco2 {
         this.contas[i].credito(valor);
     }
 
-    public void transferir(int a, int b, int valor) {
-        synchronized (this.contas[a]) {
-            synchronized (this.contas[b]) {
-                this.debito(valor, a);
-                this.credito(valor, b);
+    public void transferir(int o, int d, int valor) {
+
+        int i = o < d ? o : d;
+        int j = o < d ? d : o;
+
+        synchronized (this.contas[i]) {
+            synchronized (this.contas[j]) {
+                this.debito(valor, o);
+                this.credito(valor, d);
             }
         }
+
     }
 
     @Override
